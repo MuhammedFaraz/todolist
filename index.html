@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Todo List App</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: "Courier New", monospace;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            font-size: 16px;
+            border: none;
+            outline: none;
+            background-color: #333;
+            color: #fff;
+            width: 300px;
+        }
+
+        button {
+            padding: 8px 16px;
+            font-size: 16px;
+            border: none;
+            outline: none;
+            background-color: #333;
+            color: #fff;
+            cursor: pointer;
+            margin-top: 20px;
+            margin-left: 10px;
+        }
+
+        #taskContainer {
+            margin-top: 50px;
+        }
+
+        .task {
+            background-color: #333;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .task span {
+            display: block;
+            font-size: 14px;
+        }
+
+        input[type="checkbox"] {
+            margin-top: 5px;
+        }
+
+        #progressBar {
+            height: 10px;
+            background-color: #333;
+            margin-top: 20px;
+        }
+
+        #progressBar::before {
+            content: "";
+            display: block;
+            height: 100%;
+            background-color: #0f0;
+            transition: width 0.3s ease-in-out;
+        }
+
+        /* Media Queries */
+
+        @media screen and (max-width: 767px) {
+
+            /* Adjustments for small screens */
+            input[type="text"],
+            button {
+                width: 100%;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+
+            /* Adjustments for mobile screens */
+            h1 {
+                font-size: 24px;
+            }
+
+            input[type="text"],
+            button {
+                padding: 6px;
+                font-size: 14px;
+            }
+
+            #taskContainer {
+                margin-top: 33%;
+            }
+
+            .task span {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Todo List</h1>
+    <input type="text" id="taskInput" placeholder="Enter a task">
+    <button id="addTaskBtn">Add Task</button>
+    <div id="taskContainer"></div>
+    <div id="progressBar"></div>
+
+    <script>
+        // Task object constructor
+        function Task(description) {
+            this.description = description;
+            this.dateCreated = new Date().toLocaleString();
+            this.completed = false;
+        }
+
+        // Global variables
+        let tasks = [];
+        const taskContainer = document.getElementById('taskContainer');
+        const addTaskBtn = document.getElementById('addTaskBtn');
+        const taskInput = document.getElementById('taskInput');
+        const progressBar = document.getElementById('progressBar');
+
+        // Function to add a task
+        function addTask() {
+            const taskDescription = taskInput.value;
+            if (taskDescription.trim() === '') {
+                alert('Please enter a task description');
+                return;
+            }
+
+            const newTask = new Task(taskDescription);
+            tasks.push(newTask);
+
+            displayTasks();
+            updateProgressBar();
+
+            // Clear the input field
+            taskInput.value = '';
+        }
+
+        // Function to display tasks
+        function displayTasks() {
+            taskContainer.innerHTML = '';
+
+            tasks.forEach(function (task, index) {
+                const taskElement = document.createElement('div');
+                taskElement.className = 'task';
+                taskElement.innerHTML = `
+          <input type="checkbox" id="checkbox_${index}" ${task.completed ? 'checked' : ''}>
+          <span>${task.description}</span>
+          <span>Created: ${task.dateCreated}</span>
+        `;
+                taskContainer.appendChild(taskElement);
+
+                // Add event listener to the checkbox
+                const checkbox = document.getElementById(`checkbox_${index}`);
+                checkbox.addEventListener('change', function () {
+                    tasks[index].completed = this.checked;
+                    updateProgressBar();
+                });
+            });
+        }
+
+        // Function to update the progress bar
+        function updateProgressBar() {
+            const completedTasks = tasks.filter(function (task) {
+                return task.completed;
+            });
+            const progress = (completedTasks.length / tasks.length) * 100;
+            progressBar.style.width = progress + '%';
+        }
+
+        // Event listener for the add task button
+        addTaskBtn.addEventListener('click', addTask);
+    </script>
+</body>
+
+</html>
