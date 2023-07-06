@@ -4,6 +4,7 @@
 <head>
     <title>Todo List App</title>
     <style>
+        /* CSS styling*/
         body {
             background-color: #000;
             color: #fff;
@@ -130,6 +131,21 @@
         const taskInput = document.getElementById('taskInput');
         const progressBar = document.getElementById('progressBar');
 
+        // Load tasks from local storage
+        function loadTasks() {
+            const storedTasks = localStorage.getItem('tasks');
+            if (storedTasks) {
+                tasks = JSON.parse(storedTasks);
+                displayTasks();
+                updateProgressBar();
+            }
+        }
+
+        // Save tasks to local storage
+        function saveTasks() {
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+
         // Function to add a task
         function addTask() {
             const taskDescription = taskInput.value;
@@ -143,6 +159,7 @@
 
             displayTasks();
             updateProgressBar();
+            saveTasks();
 
             // Clear the input field
             taskInput.value = '';
@@ -167,6 +184,7 @@
                 checkbox.addEventListener('change', function () {
                     tasks[index].completed = this.checked;
                     updateProgressBar();
+                    saveTasks();
                 });
             });
         }
@@ -182,6 +200,9 @@
 
         // Event listener for the add task button
         addTaskBtn.addEventListener('click', addTask);
+
+        // Load tasks from local storage when the page loads
+        loadTasks();
     </script>
 </body>
 
